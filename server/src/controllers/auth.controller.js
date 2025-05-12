@@ -1,7 +1,8 @@
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 import sendToken from "../utils/sendToken.js";
-import { upsertStreamUser } from "../lib/stream.js";
+// import { upsertStreamUser } from "../lib/stream.js";
+import handleStreamUser from "../utils/handleStreamUser.js";
 
 export async function signup(req, res) {
   const { fullName, email, password } = req.body;
@@ -39,17 +40,8 @@ export async function signup(req, res) {
       profilePic,
     });
 
-    try {
-    await upsertStreamUser({
-      id: newUser._id.toString(),
-      name: newUser.fullName,
-      image: newUser.profilePic || "",
-    });
-    console.log(`✔️  Stream user created for ${newUser.fullName}`);
-    } catch (error) {
-      console.error(" Error Create Stream user: ", error);
-    }
-
+    // Create Stream user
+    await handleStreamUser(newUser, "created");
 
     // Generate JWT token and send it
     sendToken(newUser, res);
@@ -62,7 +54,6 @@ export async function signup(req, res) {
     res.status(500).json({ message: "Internal Server error" });
   }
 }
-
 
 export async function login(req, res) {
   const { email, password } = req.body;
@@ -84,7 +75,6 @@ export async function login(req, res) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-
     sendToken(user, res);
 
     res.status(200).json({ message: "Login successful", user });
@@ -101,18 +91,56 @@ export function logout(req, res) {
       sameSite: "strict",
       secure: process.env.NODE_ENV === "production",
     });
-    res.status(200).json({ success:true ,message: "Logout successful" });
+    res.status(200).json({ success: true, message: "Logout successful" });
   } catch (error) {
     console.error("Error in Logout Controller : ", error);
     res.status(500).json({ message: "Internal Server error" });
   }
 }
 
-
-
-export default {
-  signup,
-  login,
-  logout,
+export async function onboard(req, res) {
   
-};
+  try {
+    const userId = req.user._id;
+    const { fullName, bio, nativeLanguage, learningLanguage, location } =
+      req.body;
+    if (
+      !fullName ||
+      !bio ||
+      !nativeLanguage ||
+      !learningLanguage ||
+      !location
+    ) {
+      return res.status(400).json({
+          message: "All field are required",
+          missingFields: [
+            !fullName && "fullName",
+            !bio && "bio",
+            !nativeLanguage && "nativeLanguage",
+            !learningLanguage && "learningLanguage",
+            !location && "location",
+          ].filter(Boolean),
+        });
+    }
+
+    // Check if user exists
+    const user = await User.findByIdAndUpdate(userId,{
+        ...req.body,
+        isOnboarded: true,
+      },
+      { new: true } // Return the updated user
+    );
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+   // update stream user Info
+    await handleStreamUser(user, "updated");
+
+    res.status(200).json({ message: "Onboarding successful", user });
+  } catch (error) {
+    console.error("Error in Onboard Controller : ", error);
+    res.status(500).json({ message: "Internal Server error" });
+  }
+}
+
