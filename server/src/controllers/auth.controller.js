@@ -40,9 +40,13 @@ export async function signup(req, res) {
       profilePic,
     });
 
-    // Create Stream user
-    await handleStreamUser(newUser, "created");
-
+    try {
+      // Create Stream user
+      await handleStreamUser(newUser, "created");
+    } catch (streamError) {
+      console.error("Stream error during signup:", streamError);
+      // Continue with signup process even if Stream fails
+    }
     // Generate JWT token and send it
     sendToken(newUser, res);
 
@@ -99,7 +103,6 @@ export function logout(req, res) {
 }
 
 export async function onboard(req, res) {
-  
   try {
     const userId = req.user._id;
     const { fullName, bio, nativeLanguage, learningLanguage, location } =
@@ -112,19 +115,21 @@ export async function onboard(req, res) {
       !location
     ) {
       return res.status(400).json({
-          message: "All field are required",
-          missingFields: [
-            !fullName && "fullName",
-            !bio && "bio",
-            !nativeLanguage && "nativeLanguage",
-            !learningLanguage && "learningLanguage",
-            !location && "location",
-          ].filter(Boolean),
-        });
+        message: "All field are required",
+        missingFields: [
+          !fullName && "fullName",
+          !bio && "bio",
+          !nativeLanguage && "nativeLanguage",
+          !learningLanguage && "learningLanguage",
+          !location && "location",
+        ].filter(Boolean),
+      });
     }
 
     // Check if user exists
-    const user = await User.findByIdAndUpdate(userId,{
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
         ...req.body,
         isOnboarded: true,
       },
@@ -134,7 +139,7 @@ export async function onboard(req, res) {
       return res.status(400).json({ message: "User not found" });
     }
 
-   // update stream user Info
+    // update stream user Info
     await handleStreamUser(user, "updated");
 
     res.status(200).json({ message: "Onboarding successful", user });
@@ -143,4 +148,3 @@ export async function onboard(req, res) {
     res.status(500).json({ message: "Internal Server error" });
   }
 }
-
