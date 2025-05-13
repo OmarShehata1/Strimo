@@ -1,7 +1,6 @@
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 import sendToken from "../utils/sendToken.js";
-// import { upsertStreamUser } from "../lib/stream.js";
 import handleStreamUser from "../utils/handleStreamUser.js";
 
 export async function signup(req, res) {

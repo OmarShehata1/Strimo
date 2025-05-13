@@ -1,0 +1,18 @@
+import express from 'express';
+import { protectRoute } from '../middleware/auth.middleware.js';
+import { getMyFriends, getRecommendedUsers } from '../controllers/usr.controller.js';
+const router = express.Router();
+
+// apply middleware to all routes
+router.use(protectRoute);
+
+router.get('/', getRecommendedUsers);
+
+
+router.get('/friends', getMyFriends);
+
+
+
+
+
+export default router;
