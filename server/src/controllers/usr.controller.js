@@ -132,3 +132,68 @@ export async function acceptFriendRequest(req, res) {
     res.status(500).json({ message: "Internal server Error" });
   }
 }
+
+// export async function rejectFriendRequest(req, res) {
+//   try {
+//     const { id: requestId } = req.params;
+//     const friendRequest = await FriendRequest.findById(requestId);
+//     if (!friendRequest) {
+//       return res.status(404).json({ message: "Friend request not found!" });
+//     }
+//     // verify the current user
+//     if (friendRequest.recipient.toString() !== req.user.id) {
+//       return res
+//         .status(403)
+//         .json({ message: "you are not authorized to reject this request" });
+//     }
+//     // delete the friend request
+//     await FriendRequest.findByIdAndDelete(requestId);
+//     res.status(200).json({ message: "Friend request rejected" });
+//   } catch (error) {
+//     console.log("Error in reject Frined Request controller", error.message);
+//     res.status(500).json({ message: "Internal server Error" });
+//   }
+// }
+
+
+export async function getFriendRequests(req, res) {
+  try {
+    const userId = req.user.id;
+
+    const incomingReqs = await FriendRequest.find({
+      recipient: userId,
+      status: "pending",
+    })
+    .populate("sender", "fullName profilePic nativeLanguage learningLanguage")
+    
+    const acceptedReqs = await FriendRequest.find({
+      sender: userId,
+      status: "accepted",
+    }).populate(
+      "recipient",
+      "fullName profilePic "
+    );
+
+    res.status(200).json(incomingReqs, acceptedReqs);
+  } catch (error) {
+    console.error("Error in getPending friend requests:", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+export async function getOutgoingFriendRequests(req, res) {
+  try {
+    const userId = req.user.id;
+
+    const outgoingReqs = await FriendRequest.find({
+      sender: userId,
+      status: "pending",
+    })
+    .populate("recipient", "fullName profilePic nativeLanguage learningLanguage")
+ 
+    res.status(200).json(outgoingReqs);
+  } catch (error) {
+    console.error("Error in getOutgoing friend requests:", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
