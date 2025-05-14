@@ -7,7 +7,7 @@ function useAuthUser() {
     queryFn: getAuthUser,
     retry: false,
   });
-  return { isLaoding: authUser.isLoading, authUser: authUser.data?.user };
+  return { isLoading: authUser.isLoading, authUser: authUser.data?.user };
 }
 
 export default useAuthUser;

@@ -9,35 +9,51 @@ import ChatPage from "./pages/ChatPage";
 import OnboardingPage from "./pages/OnboardingPage";
 import PageLoader from "./components/PageLoader";
 import useAuthUser from "./hooks/useAuthUser";
+import Layout from "./components/Layout";
+import { useThemeStore } from "./store/useThemeStore";
 
 function App() {
   const { isLoading, authUser } = useAuthUser();
-  console.log(authUser);
+  const { theme } = useThemeStore();
   const isAuthenticated = Boolean(authUser);
   const isOnboarded = authUser?.isOnboarded;
 
   console.log(isAuthenticated);
   if (isLoading) return <PageLoader />;
   return (
-    <div className="h-screen" data-theme="night">
+    <div className="h-screen" data-theme={theme}>
       <Routes>
         <Route
           path="/"
           element={
             isAuthenticated && isOnboarded ? (
-              <HomePage />
+              <Layout showSidebar={true}>
+                <HomePage /> 
+              </Layout>
             ) : (
-              <Navigate to={isAuthenticated ? "/login" : "/onboarding"} />
+              <Navigate to={isAuthenticated ? "/onboarding" : "/login"} />
             )
           }
         />
         <Route
           path="/signup"
-          element={!isAuthenticated ? <SignUpPage /> : <Navigate to="/" />}
+          element={
+            !isAuthenticated ? (
+              <SignUpPage />
+            ) : (
+              <Navigate to={isOnboarded ? "/" : "/onboarding"} />
+            )
+          }
         />
         <Route
           path="/login"
-          element={!isAuthenticated ? <LoginPage /> : <Navigate to="/" />}
+          element={
+            !isAuthenticated ? (
+              <LoginPage />
+            ) : (
+              <Navigate to={isOnboarded ? "/" : "/onboarding"} />
+            )
+          }
         />
         <Route
           path="/call"

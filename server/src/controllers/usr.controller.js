@@ -11,11 +11,11 @@ export async function getRecommendedUsers(req, res) {
 
     const recommendedUsers = await User.find({
       $and: [
-        {
-          _id: { $ne: currentUserId }, // Exclude current user
-          _id: { $nin: currentUser.friends },
-        }, // Exclude friends of current user
-        { isOnboarding: true },
+      
+          {_id: { $ne: currentUserId }}, // Exclude current user
+         { _id: { $nin: currentUser.friends }},
+        // Exclude friends of current user
+        { isOnboarded: true },
       ],
     });
     res.status(200).json(recommendedUsers);
@@ -155,7 +155,6 @@ export async function acceptFriendRequest(req, res) {
 //   }
 // }
 
-
 export async function getFriendRequests(req, res) {
   try {
     const userId = req.user.id;
@@ -163,16 +162,15 @@ export async function getFriendRequests(req, res) {
     const incomingReqs = await FriendRequest.find({
       recipient: userId,
       status: "pending",
-    })
-    .populate("sender", "fullName profilePic nativeLanguage learningLanguage")
-    
+    }).populate(
+      "sender",
+      "fullName profilePic nativeLanguage learningLanguage"
+    );
+
     const acceptedReqs = await FriendRequest.find({
       sender: userId,
       status: "accepted",
-    }).populate(
-      "recipient",
-      "fullName profilePic "
-    );
+    }).populate("recipient", "fullName profilePic ");
 
     res.status(200).json(incomingReqs, acceptedReqs);
   } catch (error) {
@@ -188,9 +186,11 @@ export async function getOutgoingFriendRequests(req, res) {
     const outgoingReqs = await FriendRequest.find({
       sender: userId,
       status: "pending",
-    })
-    .populate("recipient", "fullName profilePic nativeLanguage learningLanguage")
- 
+    }).populate(
+      "recipient",
+      "fullName profilePic nativeLanguage learningLanguage"
+    );
+
     res.status(200).json(outgoingReqs);
   } catch (error) {
     console.error("Error in getOutgoing friend requests:", error.message);
