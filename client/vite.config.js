@@ -5,9 +5,14 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   build: {
-    // Improve compatibility with Vercel's Node.js environment
+    commonjsOptions: {
+      include: []
+    },
     rollupOptions: {
-      external: ['@rollup/rollup-linux-x64-gnu'],
+      external: [
+        '@rollup/rollup-linux-x64-gnu',
+        '@rollup/rollup-linux-arm64-gnu'
+      ],
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router'],

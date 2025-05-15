@@ -1,5 +1,6 @@
 {
-  "buildCommand": "npm install --no-optional && npm run build",
+  "version": 2,
+  "buildCommand": "ROLLUP_SKIP_NODEJS=true npm install --no-optional && npm run build",
   "outputDirectory": "dist",
   "rewrites": [
     {

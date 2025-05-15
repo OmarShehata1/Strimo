@@ -21,7 +21,8 @@
     "stream-chat": "^9.1.1",
     "stream-chat-react": "^13.0.0",
     "strimo": "file:..",
-    "zustand": "^5.0.4"
+    "zustand": "^5.0.4",
+    "rollup": "4.11.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
@@ -40,7 +41,8 @@
   },
   "overrides": {
     "rollup": {
-      "@rollup/rollup-linux-x64-gnu": "4.11.0"
+      "@rollup/rollup-linux-x64-gnu": "4.11.0",
+      "@rollup/rollup-linux-arm64-gnu": "4.11.0"
     }
   }
 }
