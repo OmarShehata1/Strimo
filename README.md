@@ -1,6 +1,6 @@
 <h1 align="center">✨ Fullstack Chat & Video Calling App ✨</h1>
 
-<!-- ![Demo App](/frontend/public/screenshot-for-readme.png) -->
+<!-- ![Demo App](/client/public/screenshot-for-readme.png) -->
 
 Highlights:
 
@@ -10,7 +10,7 @@ Highlights:
 - 🌍 Language Exchange Platform with 32 Unique UI Themes
 - ⚡ Tech Stack: React + Express + MongoDB + TailwindCSS + TanStack Query
 - 🧠 Global State Management with Zustand
-- 🚨 Error Handling (Frontend & Backend)
+- 🚨 Error Handling (Client & Server)
 - 🚀 Free Deployment
 - 🎯 Built with Scalable Technologies like Stream
 - ⏳ And much more!
@@ -22,7 +22,7 @@ Highlights:
 ### server (`/server`)
 
 ```
-PORT=5001
+PORT=3000
 MONGO_URI=your_mongo_uri
 STEAM_API_KEY=your_steam_api_key
 STEAM_API_SECRET=your_steam_api_secret
