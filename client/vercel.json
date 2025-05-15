@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "ROLLUP_SKIP_NODEJS=true npm install --no-optional && npm run build",
+  "buildCommand": "node --no-warnings --max-old-space-size=4096 ./node_modules/vite/bin/vite.js build --config vite.vercel.config.js",
   "outputDirectory": "dist",
   "rewrites": [
     {
