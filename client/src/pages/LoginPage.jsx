@@ -28,7 +28,7 @@ function LoginPage() {
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-primary flex items-center gap-2">
               <ShipWheelIcon className="size-9" />
-              Streamify
+              Strimo
             </h1>
           </div>
           {/* ERROR MESSAGE */}
